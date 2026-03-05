@@ -2,37 +2,33 @@ import streamlit as st
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 
-st.title("Diabetes Progression Predictor")
-
-# Upload the dataset
-uploaded_file = st.file_uploader("Upload a CSV dataset", type=["csv"])
-
-if uploaded_file is not None:
-
-    # Read dataset
-    df = pd.read_csv(uploaded_file)
-
-    st.subheader("Dataset Preview")
+# Title
+st.title("Diabetes Disease Progression Predictor")
+# Load dataset
+df = pd.read_csv("diabetes_linear_regression_dataset.csv")
+with st.expander("Click to View Full Dataset"):
     st.dataframe(df)
 
-    # Check required columns
-    if 'insulin' in df.columns and 'disease_progression' in df.columns:
+# Display dataset
+st.subheader("Dataset Preview")
+st.dataframe(df.head())
 
-        X = df[['insulin']]
-        y = df['disease_progression']
+# Prepare data
+X = df[['insulin']]
+y = df['disease_progression']
 
-        model = LinearRegression()
-        model.fit(X, y)
+# Train model
+model = LinearRegression()
+model.fit(X, y)
 
-        st.subheader("Enter Insulin Level :")
+# User input
+st.subheader("Enter Patient Insulin Level")
 
-        insulin_value = st.number_input("Insulin", min_value=0.0)
+insulin_input = st.number_input("Insulin Level", min_value=0.0)
 
-        if st.button("Predict Progression"):
-
-            prediction = model.predict([[insulin_value]])
-
-            st.success(f"Predicted Disease Progression: {prediction[0]:.2f}")
-
-    else:
-        st.error("Dataset must contain 'insulin' and 'disease_progression' columns.")
+# Make the prediction
+if st.button("Predict Disease Progression"):
+    
+    prediction = model.predict([[insulin_input]])
+    
+    st.success(f"Predicted Disease Progression Score: {prediction[0]:.2f}")
